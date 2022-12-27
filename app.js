@@ -10,8 +10,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const app = express()
 
+// 載入 handlebars
+const exphbs = require('express-handlebars')
+app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' })) //extname 指定副檔名:'.hbs'
+app.set('view engine', 'hbs')
+
 // 設定連線到 mongoDB 
-mongoose.connect( process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // 取得資料庫連線
 const db = mongoose.connection
@@ -26,7 +31,7 @@ db.once('open', () => {
 
 
 app.get('/', (req, res) => {
-  res.send('This is running')
+  res.render('index')
 })
 
 app.listen(port, () => {
