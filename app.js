@@ -8,6 +8,10 @@ const mongoose = require('mongoose')
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
+
+// 載入 Todo model
+const Todo = require('./models/todo')
+
 const app = express()
 
 // 載入 handlebars
@@ -31,7 +35,11 @@ db.once('open', () => {
 
 
 app.get('/', (req, res) => {
-  res.render('index')
+  // 拿到 Todo 資料
+  Todo.find() // 取出 Todo model 所有資料
+    .lean() // 把 mongoose 的 model 轉換成乾淨的 Javascript 資料陣列
+    .then(todos => res.render('index', { todos })) // 將資料傳給 views/index 
+    .catch(error => console.error(error)) // 錯誤回報
 })
 
 app.listen(port, () => {
