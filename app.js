@@ -65,7 +65,27 @@ app.get('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findById(id) // 從db 找出自動產生的id資料
     .lean() // 轉換成 JS物件
-    .then( (todo) => res.render('detail', { todo })) // 渲染前端樣板 導入todo 資料
+    .then((todo) => res.render('detail', { todo })) // 渲染前端樣板 導入todo 資料
+    .catch(error => console.log(error))
+})
+
+app.get('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  return Todo.findById(id) // 從db 找出自動產生的id資料
+    .lean() // 轉換成 JS物件
+    .then((todo) => res.render('edit', { todo })) // 渲染前端樣板 導入todo 資料
+    .catch(error => console.log(error))
+})
+
+app.post('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  const name = req.body.name
+  return Todo.findById(id)
+    .then((todo) => {
+      todo.name = name
+      return todo.save()
+    })
+    .then(() => res.redirect(`/todos/${id}`))
     .catch(error => console.log(error))
 })
 
