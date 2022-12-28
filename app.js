@@ -62,8 +62,8 @@ app.post('/todos', (req, res) => {
 })
 
 app.get('/todos/:id', (req, res) => {
-  const id = req.params.id
-  return Todo.findById(id) // 從db 找出自動產生的id資料
+  const id = req.params.id // 從 URL中利用req.params 找到 id
+  return Todo.findById(id) // 把id用findById找出mongoDB中id資料
     .lean() // 轉換成 JS物件
     .then((todo) => res.render('detail', { todo })) // 渲染前端樣板 導入todo 資料
     .catch(error => console.log(error))
@@ -80,12 +80,23 @@ app.get('/todos/:id/edit', (req, res) => {
 app.post('/todos/:id/edit', (req, res) => {
   const id = req.params.id
   const name = req.body.name
-  return Todo.findById(id)
+  return Todo.findById(id) // return : 請求會有失敗/成功的情況,利用 return 可除錯
+    // 使用JS語法利用mongoose在DB 找到對應id後,拉資料到sever端, 接著 .then 執行以下function
     .then((todo) => {
       todo.name = name
-      return todo.save()
+      return todo.save() // 把 client端送出的 修改後todo 轉成 資料庫指令 給 DB 
     })
-    .then(() => res.redirect(`/todos/${id}`))
+    .then(() => res.redirect(`/todos/${id}`)) // 修正後的資料 在重新 redirect 執行 detail action
+    .catch(error => console.log(error))
+})
+
+// delete: 刪除功能
+app.post('/todos/:id/delete', (req, res) => {
+  const id = req.params.id // 取得URL上的id,用來查詢想刪除的todo_id
+  const name = req.body.name
+  return Todo.findById(id)
+    .then(todo => todo.remove()) // 刪除這筆資料
+    .then(() => res.redirect('/'))
     .catch(error => console.log(error))
 })
 
