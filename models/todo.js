@@ -8,8 +8,9 @@ const todoSchema = new Schema({
     type: String,  // 資料型別事字串
     required: true // 這個是必填欄位
   },
-  done: {
-    type: Boolean
+  isDone: {
+    type: Boolean,
+    default: false
   }
 })
 // 透過 module.exports 輸出
