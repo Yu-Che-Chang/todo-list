@@ -15,6 +15,7 @@ const bodyParser = require('body-parser')
 // 載入 Todo model
 const Todo = require('./models/todo')
 
+const methodOverRide = require('method-override')
 const app = express()
 
 // 載入 handlebars
@@ -26,6 +27,8 @@ app.set('view engine', 'hbs')
 // 用 app.use 規定每一筆請求都需要透過 body-parser 進行前置處理
 // 通過 body parser 轉成 req.body 物件
 app.use(bodyParser.urlencoded({ extender: true }))
+
+app.use(methodOverRide('_method'))
 
 // 設定連線到 mongoDB 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -79,7 +82,7 @@ app.get('/todos/:id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 // POST EDIT
-app.post('/todos/:id/edit', (req, res) => {
+app.put('/todos/:id', (req, res) => {
   const id = req.params.id
   const { name, isDone } = req.body// 解構賦值:用req.body的物件資料把 name,isDone 撈出來解構
   return Todo.findById(id) // return : 請求會有失敗/成功的情況,利用 return 可除錯
@@ -94,7 +97,7 @@ app.post('/todos/:id/edit', (req, res) => {
 })
 
 // delete: 刪除功能
-app.post('/todos/:id/delete', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
   const id = req.params.id // 取得URL上的id,用來查詢想刪除的todo_id
   const name = req.body.name
   return Todo.findById(id)
