@@ -45,6 +45,7 @@ app.get('/', (req, res) => {
   // controller: 拿到 Todo 資料
   Todo.find() // 取出 Todo model 所有資料
     .lean() // 把 mongoose 的 model 轉換成乾淨的 Javascript 資料陣列
+    .sort({ _id: 'asc' }) // asc 正序 and desc 反序
     .then(todos => res.render('index', { todos })) // 將資料傳給 views/index 
     .catch(error => console.log(error)) // 錯誤回報
 })
